@@ -1,2 +1,2 @@
 # Normal-Maps
- Get the normal map from an image
+A custom implementation to get a normal map from an image.

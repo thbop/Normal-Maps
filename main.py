@@ -1,6 +1,7 @@
 from PIL import Image
 from pygame.math import Vector3
 
+# Load height map
 base_image = Image.open('heightmap.png')
 pix = base_image.load()
 
@@ -21,6 +22,13 @@ def nvec_to_color(vec):
         v_to_color(vec.z)
     )
 
+def four_h_to_vec(v1, v2, v3, v4):
+    return Vector3(
+            -(v4 - v2) * ((y - 1) - (y + 1)),
+            -((x - 1) - (x + 1)) * (v1 - v3),
+            ((x - 1) - (x + 1)) - ((y - 1) - (y + 1))
+        )
+
 for x in range(base_image.size[0]):
     for y in range(base_image.size[1]):
         border_pixel = x == 0 or x == base_image.size[0] - 1 or y == 0 or y == base_image.size[1] - 1
@@ -29,12 +37,12 @@ for x in range(base_image.size[0]):
             v2 = rgb_to_v(pix[x + 1, y])
             v3 = rgb_to_v(pix[x, y + 1])
             v4 = rgb_to_v(pix[x - 1, y])
+            c1 = rgb_to_v(pix[x - 1, y - 1])
+            c2 = rgb_to_v(pix[x + 1, y - 1])
+            c3 = rgb_to_v(pix[x + 1, y + 1])
+            c4 = rgb_to_v(pix[x - 1, y + 1])
             
-            normal = Vector3(
-                -(v4 - v2) * ((y - 1) - (y + 1)),
-                -((x - 1) - (x + 1)) * (v1 - v3),
-                ((x - 1) - (x + 1)) - ((y - 1) - (y + 1))
-            )
+            normal = four_h_to_vec(v1, v2, v3, v4) + four_h_to_vec(c1, c2, c3, c4)
             if normal.length() != 0:
                 normal = normal.normalize()
             else:
