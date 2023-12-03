@@ -55,17 +55,19 @@ for x in range(base_image.size[0]):
             
             # Normalize
             if normal.length() != 0:
-                normal = normal.normalize()
+                # Converts [-1 to 1] to [0 to 1]
+                normal = (normal.normalize() + Vector3(1, 1, 1)) / 2
             else:
                 # I don't know why, but when using Lambertian lighting, this vector for flat surfaces seems the best.
                 normal = Vector3(1, 0, 0)
+            
 
             # Lambertian
-            value = v_to_color( normal.dot(Vector3(.5, .5, -1)) ) 
-            npix[x, y] = (value, value, value)
+            # value = v_to_color( normal.dot(Vector3(.5, .5, -1)) ) 
+            # npix[x, y] = (value, value, value)
             
             # Just normal
-            # npix[x, y] = nvec_to_color(normal)
+            npix[x, y] = nvec_to_color(normal)
 
 
 normal_image.save('normalmap.png')
